@@ -8,7 +8,7 @@
     "virtualMachineName": "strapi",
     "adminUsername": "strapiadmin",
     "adminPasswordOrKey": "$tr@p!@12345",
-    "dnsLabelPrefix": "[toLower(format('{0}-{1}', variables('virtualMachineName'), uniqueString(subscription().subscriptionId)))]",
+    "dnsLabelPrefix": "[toLower(format('{0}-{1}', variables('virtualMachineName'), substring(uniqueString(resourceGroup().id),0,5)))]",
     "ubuntuOSVersion": "20_04-lts-gen2",
     "vmSize": "Standard_B1ms",
     "virtualNetworkName": "strapi-vNet",
@@ -229,7 +229,7 @@
         "autoUpgradeMinorVersion": true,
         "settings": {
           "fileUris": [
-            "[uri(variables('_artifactsLocation'), concat('scripts/install-on-vm.sh', variables('_artifactsLocationSasToken')))]"
+            "https://raw.githubusercontent.com/sangramrath/strapi-community-content/master/tutorials/code/strapi-quickstart-azure-arm/scripts/install-on-vm.sh"
           ],
           "commandToExecute": "sh install-on-vm.sh"
         }
@@ -239,11 +239,7 @@
   "outputs": {
     "strapiURL": {
       "type": "String",
-      "value": "[variables('dnsLabelPrefix')]"
-    },
-    "strapiPublicIP": {
-      "type": "String",
-      "value": "[reference(variables('publicIPAddressName')).properties.ipAddress]"
+      "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddressName'))).dnsSettings.fqdn]"
     }
   }
 }
